@@ -16,7 +16,7 @@ class SlackBot():
 		send = self.slack_client.api_call("chat.postMessage",
 			channel=to, 
 			text=message,
-			username="botname",
+			username="",
 			as_user="true"
 			)
 		return send
@@ -27,7 +27,7 @@ class RSS():
 
 	def __init__(self):
 		self.url = 'http://feeds.feedburner.com/PlaneteBdLight-ChroniquesComics?format=xml'
-		
+		self.datefile = 'lastupdate.txt'
 
 	def checkRSSFeed(self):
 		feed = feedparser.parse(self.url)
@@ -39,10 +39,10 @@ class RSS():
 		# create the file if it doesn't exist
 
 		try:
-			datefile = open("lastupdate.txt", "r")
+			datefile = open(self.datefile, "r")
 			lastupdate = datefile.read() 
 		except IOError:
-			datefile = open("lastupdate.txt", "w")
+			datefile = open(self.datefile, "w")
 			lastupdate = date
 			datefile.write(lastupdate)
 
@@ -54,7 +54,7 @@ class RSS():
 	def updateDate(self, date):
 		# update the last update date in a file
 
-		datefile = open("lastupdate.txt", "w")
+		datefile = open(self.datefile, "w")
 		datefile.write(date)
 		datefile.close()
 
@@ -78,4 +78,4 @@ feed = flux.checkRSSFeed()
 for post in reversed(feed['entries']):
 	infos = '*' +post['title'] + '* ' + post['id']
 	if flux.checkIfNew(post['updated'], infos):
-		bot.send_message_to_slack("#exampler",infos)
+		bot.send_message_to_slack("",infos)
